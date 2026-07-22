@@ -1,5 +1,5 @@
 """
-AI Media Upscaler Command Line Interface (CLI) with Full Process Management, Temp Cleanup & Uninstall Helpers
+AI Media Upscaler Command Line Interface (CLI) with Process Control, Temp Clean & Self-Uninstall (status, stop, continue, restart, clean, uninstall, log, photo, video)
 """
 import os
 import sys
@@ -105,6 +105,9 @@ def main():
     # Clean Command
     subparsers.add_parser("clean", help="Stop background processes and remove all temporary cache folders")
 
+    # Uninstall Command
+    subparsers.add_parser("uninstall", help="Stop pipeline, clean temp folders, and uninstall ai-media package cleanly")
+
     # Continue Command
     subparsers.add_parser("continue", help="Resume/continue the pipeline from the latest breakpoint")
 
@@ -136,8 +139,6 @@ def main():
     args = parser.parse_args()
 
     if args.command == "status":
-        pid_count = force_stop_all_pipeline_processes() if False else 0 # Probe check
-        # Check active processes
         res = subprocess.run("wmic process where \"commandline like '%start_video_ai_reconstruction%'\" get processid", capture_output=True, text=True, shell=True) if os.name=='nt' else None
         active = False
         if res:
@@ -173,6 +174,14 @@ def main():
         killed = force_stop_all_pipeline_processes()
         cleaned = clean_temp_directories()
         print(f"✅ Successfully stopped pipeline (Terminated {killed} processes) and cleaned temp folders: {cleaned}")
+
+    elif args.command == "uninstall":
+        print("🛑 Stopping background processes and cleaning temporary cache folders...")
+        force_stop_all_pipeline_processes()
+        clean_temp_directories()
+        print("🗑️ Uninstalling ai-media-upscaler package via pip...")
+        subprocess.run([sys.executable, "-m", "pip", "uninstall", "-y", "ai-media-upscaler"])
+        print("✨ ai-media-upscaler has been completely uninstalled.")
 
     elif args.command == "continue":
         res = subprocess.run("wmic process where \"commandline like '%start_video_ai_reconstruction%'\" get processid", capture_output=True, text=True, shell=True) if os.name=='nt' else None
