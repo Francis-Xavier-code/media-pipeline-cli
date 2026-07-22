@@ -21,8 +21,8 @@
 
 ## ✨ Features
 
+- **📺 Real-Time Streaming Logs (`ai-media log`)**: Dedicated CLI command to watch live UTF-8 streaming logs with zero garbled text.
 - **⏩ Automatic Breakpoint Resume**: Interruptions, shutdowns, or re-runs instantly skip 100% completed files and resume right where it left off!
-- **⚡ Real-Time Streaming Logs**: Instant, unbuffered progress logging with execution time, frame count, and output file sizes.
 - **📐 Aspect-Ratio Safe Scaling**: Auto-detects portrait (vertical) vs landscape (horizontal) media, preventing squished or stretched distortion.
 - **🖼️ Photo 4K/8K AI Super-Resolution**: Batch upscales images using Real-ESRGAN Vulkan models.
 - **🎬 Video 120fps Frame Interpolation**: Interpolates 24fps/30fps videos up to 60fps/120fps using RIFE.
@@ -49,7 +49,12 @@ pip install git+https://github.com/Francis-Xavier-code/media-pipeline-cli.git
 
 ## 🚀 CLI Usage
 
-### 1. Photo 4K/8K AI Upscaling
+### 1. Watch Real-Time Logs
+```bash
+ai-media log
+```
+
+### 2. Photo 4K/8K AI Upscaling
 ```bash
 ai-media photo \
   --input "./input_photos" \
@@ -59,7 +64,7 @@ ai-media photo \
   --scale 4
 ```
 
-### 2. Video 120fps & 10-bit HDR Interpolation
+### 3. Video 120fps & 10-bit HDR Interpolation
 ```bash
 ai-media video \
   --input "./input_video.mp4" \
@@ -68,21 +73,6 @@ ai-media video \
   --gpu 0 \
   --fps 120 \
   --hdr
-```
-
----
-
-## 🏗️ Architecture
-
-```mermaid
-graph TD
-    A["Raw Media Files (Photos / Videos)"] --> B["ai-media CLI Controller / AI Agent"]
-    B -->|Photo Upscaling| C["Real-ESRGAN Vulkan GPU Engine (4K/8K/16K PNG)"]
-    B -->|Video Interpolation| D["RIFE Vulkan GPU Engine (120fps Smoothness)"]
-    B -->|10-bit HDR Re-encoding| E["NVIDIA NVENC Hardware Encoder (10-bit HDR10 HEVC)"]
-    C --> F["Ultra-HD Output Storage"]
-    D --> F
-    E --> F
 ```
 
 ---
