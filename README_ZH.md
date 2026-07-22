@@ -23,18 +23,11 @@
 
 ---
 
-## 🤖 零手动克隆 · 一句话给 AI Agent 自动搞定 (支持 OpenClaw / Claude Code / Cursor / AGY 等)
-
-用户**无需手动克隆仓库**，直接将下面**一句话指令**发送给任意 AI Agent，AI 就会自动远程下载规范、自动安装环境并执行媒体画质重构：
-
-> 💬 **【零手动克隆】直接发送给 AI Agent 的指令：**
-> 
-> *"请读取远程规范 https://raw.githubusercontent.com/Francis-Xavier-code/media-pipeline-cli/main/skills/media-upscaler/SKILL.md ，自动帮我安装并使用 GPU 将指定目录下的图片和视频批量重构为 4K 120帧 HDR 画质。"*
-
----
-
 ## ✨ 核心特性
 
+- **⏩ 智能断点续传 (Breakpoint Resume)**：中断、中途关机或重新运行命令时，自动跳过所有已完成的文件，实现秒级自动接力！
+- **⚡ 实时流式日志 (Real-Time Streaming Logs)**：实时无缓冲输出处理进度、处理耗时、帧数与文件大小。
+- **📐 智能自适应比例 (Aspect-Ratio Safe)**：自动检测横屏/竖屏视频与图片，2x/4K 升频绝不拉伸变形。
 - **🖼️ 图片 4K/8K/16K AI 无损超分**：集成 Real-ESRGAN Vulkan 模型，将模糊照片无损拉升至 4K/8K 巨幅清晰度。
 - **🎬 视频 120fps 光流插帧**：集成 RIFE 深度学习光流补帧，将 24fps/30fps 视频插帧至 60fps/120fps 丝滑画质。
 - **🌟 10-bit HDR10 动态范围重构**：结合显卡 NVENC 硬件编码，将 SDR 视频色彩升级为 10-bit HDR10 (10.7 亿色)。
@@ -42,14 +35,13 @@
 
 ---
 
-## 🛠️ 前置要求
+## 🤖 零手动克隆 · 一句话给 AI Agent 自动搞定 (支持 OpenClaw / Claude Code / Cursor / AGY 等)
 
-| 要求 | 详情 |
-|:---|:---|
-| **Python** | 3.8 或更高版本 |
-| **GPU** | NVIDIA RTX 系列显卡（需支持 Vulkan） |
-| **图片引擎** | [Real-ESRGAN ncnn Vulkan](https://github.com/xinntao/Real-ESRGAN/releases) 可执行文件 |
-| **视频引擎** | [RIFE ncnn Vulkan](https://github.com/nihui/rife-ncnn-vulkan/releases) 可执行文件 |
+用户**无需手动克隆仓库**，直接将下面**一句话指令**发送给任意 AI Agent，AI 就会自动远程下载规范、自动安装环境并执行媒体画质重构：
+
+> 💬 **【零手动克隆】直接发送给 AI Agent 的指令：**
+> 
+> *"请读取远程规范 https://raw.githubusercontent.com/Francis-Xavier-code/media-pipeline-cli/main/skills/media-upscaler/SKILL.md ，自动帮我安装并使用 GPU 将指定目录下的图片和视频批量重构为 4K 120帧 HDR 画质。"*
 
 ---
 
@@ -83,66 +75,6 @@ ai-media video \
   --fps 120 \
   --hdr
 ```
-
----
-
-## 📋 命令行参数说明
-
-### `ai-media photo`
-
-| 参数 | 缩写 | 必填 | 默认值 | 说明 |
-|:---|:---:|:---:|:---:|:---|
-| `--input` | `-i` | ✅ | — | 输入图片目录 |
-| `--output` | `-o` | ✅ | — | 输出 4K 图片目录 |
-| `--exe` | — | ✅ | — | `realesrgan-ncnn-vulkan.exe` 路径 |
-| `--gpu` | — | — | `0` | GPU 设备 ID |
-| `--scale` | — | — | `4` | 放大倍率（`2`、`4`、`8`） |
-| `--no-dedupe` | — | — | `false` | 禁用 MD5 内容去重 |
-
-### `ai-media video`
-
-| 参数 | 缩写 | 必填 | 默认值 | 说明 |
-|:---|:---:|:---:|:---:|:---|
-| `--input` | `-i` | ✅ | — | 输入视频文件或目录 |
-| `--output` | `-o` | ✅ | — | 输出视频目录 |
-| `--exe` | — | ✅ | — | `rife-ncnn-vulkan.exe` 路径 |
-| `--gpu` | — | — | `0` | GPU 设备 ID |
-| `--fps` | — | — | `120` | 目标帧率（`60`、`120`） |
-| `--hdr` | — | — | `false` | 启用 10-bit HDR10 色彩重编码 |
-
----
-
-## 📁 项目结构
-
-```
-media-pipeline-cli/
-├── ai_media_upscaler/          # 核心 Python 包
-│   ├── __init__.py
-│   ├── cli.py                  # CLI 入口 & 参数解析
-│   ├── photo_engine.py         # Real-ESRGAN Vulkan 图片超分引擎
-│   └── video_engine.py         # RIFE Vulkan 视频插帧引擎
-├── assets/                     # 文档对比图片
-├── skills/                     # AI Agent 技能规范
-│   └── media-upscaler/
-│       └── SKILL.md
-├── LICENSE                     # MIT 开源许可
-├── pyproject.toml              # Python 包配置
-├── setup.py                    # 传统安装脚本
-├── README.md                   # 英文文档
-└── README_ZH.md                # 中文文档
-```
-
----
-
-## 🤝 参与贡献
-
-欢迎参与贡献！请按以下步骤操作：
-
-1. Fork 本仓库
-2. 创建特性分支 (`git checkout -b feature/amazing-feature`)
-3. 提交更改 (`git commit -m 'Add amazing feature'`)
-4. 推送到分支 (`git push origin feature/amazing-feature`)
-5. 创建 Pull Request
 
 ---
 
