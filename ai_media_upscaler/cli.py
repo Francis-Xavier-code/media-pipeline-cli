@@ -5,6 +5,7 @@ import os
 import sys
 import time
 import signal
+import ctypes
 import argparse
 import subprocess
 from .photo_engine import PhotoUpscaleEngine
@@ -13,18 +14,34 @@ from .video_engine import VideoEnhanceEngine
 PID_FILE = os.path.expanduser(r"~\.ai_media_pipeline.pid")
 LOG_FILE = r"C:\Users\19509\.gemini\antigravity-cli\brain\909da7d6-0567-401a-946d-b8da7d08373b\.system_generated\tasks\task-1336.log"
 
+def is_pid_running(pid):
+    """Win32 & POSIX Native Robust PID Checker."""
+    if pid <= 0:
+        return False
+    if os.name == 'nt':
+        PROCESS_QUERY_INFORMATION = 0x0400
+        STILL_ACTIVE = 259
+        kernel32 = ctypes.windll.kernel32
+        handle = kernel32.OpenProcess(PROCESS_QUERY_INFORMATION, False, pid)
+        if not handle:
+            return False
+        exit_code = ctypes.c_ulong()
+        kernel32.GetExitCodeProcess(handle, ctypes.byref(exit_code))
+        kernel32.CloseHandle(handle)
+        return exit_code.value == STILL_ACTIVE
+    else:
+        try:
+            os.kill(pid, 0)
+            return True
+        except OSError:
+            return False
+
 def get_running_pid():
     if os.path.exists(PID_FILE):
         try:
             with open(PID_FILE, 'r') as f:
                 pid = int(f.read().strip())
-            # Check if PID is active
-            if os.name == 'nt':
-                res = subprocess.run(["tasklist", "/FI", f"PID eq {pid}"], capture_output=True, text=True)
-                if str(pid) in res.stdout:
-                    return pid
-            else:
-                os.kill(pid, 0)
+            if is_pid_running(pid):
                 return pid
         except Exception:
             pass
@@ -112,12 +129,11 @@ def main():
             print("❌ Failed to stop pipeline:", e)
 
     elif args.command == "continue":
-        print("🚀 Resuming ai-media processing pipeline from breakpoint...")
         pid = get_running_pid()
         if pid:
             print(f"🟢 Pipeline is already running (PID: {pid}). Use 'ai-media log' to watch live progress.")
             return
-        # Run background video reconstruction script
+        print("🚀 Resuming ai-media processing pipeline from breakpoint...")
         script_path = r"C:\Users\19509\.gemini\antigravity-cli\brain\909da7d6-0567-401a-946d-b8da7d08373b\scratch\start_video_ai_reconstruction.py"
         if os.path.exists(script_path):
             p = subprocess.Popen([sys.executable, script_path], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
@@ -129,7 +145,6 @@ def main():
 
     elif args.command == "restart":
         print("🔄 Restarting ai-media processing pipeline...")
-        # 1. Stop if running
         pid = get_running_pid()
         if pid:
             print(f"🛑 Stopping existing pipeline (PID: {pid})...")
@@ -139,7 +154,6 @@ def main():
                 os.kill(pid, signal.SIGTERM)
             time.sleep(1)
 
-        # 2. Start new background pipeline
         script_path = r"C:\Users\19509\.gemini\antigravity-cli\brain\909da7d6-0567-401a-946d-b8da7d08373b\scratch\start_video_ai_reconstruction.py"
         if os.path.exists(script_path):
             p = subprocess.Popen([sys.executable, script_path], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
