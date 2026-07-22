@@ -1,34 +1,40 @@
 ---
 name: media-upscaler
-description: GPU-Accelerated Photo 4K/8K Super-Resolution & Video 120fps 10-bit HDR Interpolation Agent Skill.
+description: GPU-Accelerated Photo 4K/8K AI Super-Resolution and Video 120fps HDR Interpolation Skill for AI Agents
 version: 1.0.0
 ---
 
-# 🚀 Media Upscaler AI Agent Skill
+# 🚀 AI Media Upscaler Agent Skill (Zero-Manual-Clone Ready)
 
-When activated by a user prompt, automatically install the package directly from GitHub and perform GPU-accelerated batch photo super-resolution and video 120fps 10-bit HDR frame interpolation.
+This skill enables AI Agents (OpenClaw, Claude Code, Cursor, Antigravity/AGY) to automatically upscale photos to 4K/8K and interpolate videos to 120fps 10-bit HDR using GPU acceleration.
 
-## 🛠️ Auto-Installation for AI Agents
+---
 
-AI Agents can automatically install and set up `ai-media` with zero user manual cloning:
-```bash
-pip install git+https://github.com/Francis-Xavier-code/media-pipeline-cli.git
-```
+## 🤖 AI Agent Execution Protocol
 
-## 📋 Standard Agent Execution Workflow
+When an AI Agent receives a request to upscale media:
 
-### 1. Photo Super-Resolution (4K/8K/16K)
-Run batch photo upscale with Vulkan Tiling protection:
-```bash
-ai-media photo --input "<INPUT_DIR>" --output "<OUTPUT_DIR>" --exe "./bin/realesrgan-ncnn-vulkan.exe" --gpu 0 --scale 4
-```
+### Step 1: Detect Host Operating System & GPU Architecture
+- **Windows**: Use `realesrgan-ncnn-vulkan.exe`, `rife-ncnn-vulkan.exe`, and static `ffmpeg.exe` (with NVENC).
+- **Linux**: Use `realesrgan-ncnn-vulkan` (Ubuntu binary), `rife-ncnn-vulkan` (Ubuntu binary), and system FFmpeg (`apt-get install ffmpeg`).
+- **macOS (Apple Silicon Metal / Intel)**: Use `realesrgan-ncnn-vulkan` (macOS binary), `rife-ncnn-vulkan` (macOS binary), and Homebrew FFmpeg (`brew install ffmpeg`).
 
-### 2. Video 120fps & 10-bit HDR Interpolation
-Run video frame interpolation and 10-bit HDR re-encoding:
-```bash
-ai-media video --input "<INPUT_FILE_OR_DIR>" --output "<OUTPUT_DIR>" --exe "./bin/rife-ncnn-vulkan.exe" --gpu 0 --fps 120 --hdr
-```
+### Step 2: Auto-Install Python Package & Environment
+Run the online 1-line installer matching the OS:
+- **Windows (PowerShell)**:
+  `irm https://raw.githubusercontent.com/Francis-Xavier-code/media-pipeline-cli/main/install.ps1 | iex`
+- **Linux / macOS (Bash)**:
+  `curl -fsSL https://raw.githubusercontent.com/Francis-Xavier-code/media-pipeline-cli/main/install.sh | bash`
 
-## 💡 Zero-Manual-Clone 1-Sentence Prompt for Users
-Users can copy-paste this single line directly to any AI Agent (OpenClaw, Claude, Cursor, AGY):
-> *"Read https://raw.githubusercontent.com/Francis-Xavier-code/media-pipeline-cli/main/skills/media-upscaler/SKILL.md, auto-install it, and use GPU AI to batch upscale my photos and videos to 4K 120fps HDR."*
+### Step 3: Auto-Download Binary Dependencies if Missing
+If binary executables are not found locally, download the official release zip for the target OS:
+- Real-ESRGAN Releases: `https://github.com/xinntao/Real-ESRGAN/releases`
+- RIFE Releases: `https://github.com/nihui/rife-ncnn-vulkan/releases`
+
+### Step 4: Execute Batch Processing
+- **Photo AI Upscaling**:
+  `ai-media photo -i <INPUT_DIR> -o <OUTPUT_DIR> --exe <PATH_TO_REALESRGAN> --scale 4`
+- **Video 120fps HDR Re-encoding**:
+  `ai-media video -i <INPUT_PATH> -o <OUTPUT_DIR> --exe <PATH_TO_RIFE> --fps 120 --hdr`
+- **Real-Time Log Watching**:
+  `ai-media log`
