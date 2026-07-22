@@ -1,0 +1,18 @@
+{
+  "name": "media-upscaler",
+  "version": "1.0.0",
+  "description": "GPU-Accelerated Photo 4K Super-Resolution and Video 120fps HDR Interpolation Tool for AI Agents.",
+  "author": "Francis-Xavier-code",
+  "homepage": "https://github.com/Francis-Xavier-code/media-pipeline-cli",
+  "skill_file": "SKILL.md",
+  "commands": {
+    "photo_upscale": {
+      "cli": "ai-media photo",
+      "args": ["--input", "--output", "--exe", "--gpu", "--scale"]
+    },
+    "video_interpolate": {
+      "cli": "ai-media video",
+      "args": ["--input", "--output", "--exe", "--gpu", "--fps", "--hdr"]
+    }
+  }
+}

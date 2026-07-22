@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ai-media-upscaler"
+version = "1.0.0"
+description = "✨ GPU-Accelerated Photo 4K/8K Super-Resolution & Video 120fps HDR Interpolation CLI"
+readme = "README.md"
+authors = [{ name = "AI OpenSource Team", email = "opensource@example.com" }]
+license = { text = "MIT" }
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+dependencies = [
+    "Pillow>=9.0.0",
+]
+
+[project.scripts]
+ai-media = "ai_media_upscaler.cli:main"
