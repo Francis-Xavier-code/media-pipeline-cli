@@ -1,6 +1,6 @@
 # ✨ AI Media Upscaler CLI (媒体 AI 画质重构工具)
 
-🌐 **简体中文** | **[English](README.md)** | **[📚 完整文档目录 (docs/)](docs/CLI_USAGE_ZH.md)** | **[🏗️ 系统架构设计](docs/ARCHITECTURE_ZH.md)**
+🌐 **简体中文** | **[English](README.md)** | **[📚 完整文档目录 (docs/)](docs/CLI_USAGE_ZH.md)** | **[🏗️ 系统架构设计](docs/ARCHITECTURE_ZH.md)** | **[📦 Releases (发布包)](https://github.com/Francis-Xavier-code/media-pipeline-cli/releases)**
 
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
@@ -14,6 +14,22 @@
 
 ---
 
+## ⚡ 1 行在线一键安装脚本 (1-Line Online Installer)
+
+无需手动 `git clone`，直接在终端中复制运行以下 1 行脚本即可全自动安装：
+
+### 🪟 Windows (PowerShell):
+```powershell
+irm https://raw.githubusercontent.com/Francis-Xavier-code/media-pipeline-cli/main/install.ps1 | iex
+```
+
+### 🐧 Linux & 🍎 macOS (Terminal / Bash):
+```bash
+curl -fsSL https://raw.githubusercontent.com/Francis-Xavier-code/media-pipeline-cli/main/install.sh | bash
+```
+
+---
+
 ## 💻 跨平台支持 (Cross-Platform Matrix)
 
 | 操作系统 | GPU 硬件加速 API | 视频硬件编码器 |
@@ -24,14 +40,13 @@
 
 ---
 
-## 📦 二进制可执行文件说明 (Portable Binaries)
+## 📦 Releases 发布包说明 (Portable Binaries)
 
-根据 GitHub 开源规范，**大型二进制文件（如 Real-ESRGAN, RIFE, FFmpeg）不适合直接提交在源码 Git 树中**。
+我们已经在 **[GitHub Releases (v1.0.0)](https://github.com/Francis-Xavier-code/media-pipeline-cli/releases)** 正式上线官方 Release 发行版本！
 
-我们在 **[GitHub Releases](https://github.com/Francis-Xavier-code/media-pipeline-cli/releases)** 发布区为 Windows / Linux / macOS 提供了下载链接：
-
-- **Real-ESRGAN Vulkan**: [Windows](https://github.com/xinntao/Real-ESRGAN/releases) | [Linux](https://github.com/xinntao/Real-ESRGAN/releases) | [macOS](https://github.com/xinntao/Real-ESRGAN/releases)
-- **RIFE Vulkan**: [Windows](https://github.com/nihui/rife-ncnn-vulkan/releases) | [Linux](https://github.com/nihui/rife-ncnn-vulkan/releases) | [macOS](https://github.com/nihui/rife-ncnn-vulkan/releases)
+您可以前往 [Releases 页面](https://github.com/Francis-Xavier-code/media-pipeline-cli/releases) 查看完整 Changelog 或获取独立二进制依赖：
+- **Real-ESRGAN Vulkan**: [Real-ESRGAN Releases](https://github.com/xinntao/Real-ESRGAN/releases)
+- **RIFE Vulkan**: [RIFE Releases](https://github.com/nihui/rife-ncnn-vulkan/releases)
 - **FFmpeg**: 系统常规安装即可 (`sudo apt install ffmpeg` / `brew install ffmpeg`)
 
 ---
