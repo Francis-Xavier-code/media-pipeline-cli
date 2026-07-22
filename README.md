@@ -6,27 +6,46 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20Linux%20%7C%20macOS-blue.svg)](#)
 [![GPU Accelerated](https://img.shields.io/badge/GPU-Vulkan%20%7C%20NVENC%20%7C%20Metal-green.svg)](#)
+[![Hardware Safety](https://img.shields.io/badge/Hardware%20Safety-CPU%20Fallback%20Net-orange.svg)](#)
 [![Agent Skill](https://img.shields.io/badge/AI%20Agent-Zero%20Clone%20Ready-purple.svg)](skills/media-upscaler/SKILL.md)
 
-> **GPU-Accelerated Cross-Platform (Windows, Linux, macOS) Photo 4K/8K AI Super-Resolution and Video 120fps HDR Interpolation CLI.**
+> **GPU-Accelerated & CPU-Fallback Cross-Platform (Windows, Linux, macOS) Photo 4K/8K AI Super-Resolution and Video 120fps HDR Interpolation CLI.**
 
-`media-pipeline` (ai-media) is a high-performance, lightweight CLI tool for batch upgrading photos and videos using GPU hardware acceleration (Vulkan, Apple Metal, NVIDIA NVENC & macOS VideoToolbox).
+`media-pipeline` (ai-media) is a high-performance, ultra-compatible CLI tool. It prioritizes GPU hardware acceleration (Vulkan, Apple Metal, NVIDIA NVENC & macOS VideoToolbox) while featuring a **Triple Hardware CPU Fallback Safety Net** for low-spec PCs, integrated graphics, or headless cloud servers to guarantee **100% execution success with zero crashes**.
+
+---
+
+## 🛡️ Zero-Crash Hardware Fallback Architecture
+
+```mermaid
+graph TD
+    A["Start Processing Media File"] --> B{"1. GPU Vulkan Check"}
+    B -->|Supported| C["GPU Vulkan Mode (-g 0)"]
+    B -->|Not Supported / No GPU| D["⚠️ Auto Fallback: CPU Multi-threading (-g -1)"]
+    
+    C --> E{"2. Video Codec Check"}
+    D --> E
+    
+    E -->|NVIDIA GPU| F["NVIDIA NVENC (hevc_nvenc)"]
+    E -->|Apple Silicon| G["Apple VideoToolbox (hevc_videotoolbox)"]
+    E -->|No GPU / Old iGPU| H["⚠️ Auto Fallback: CPU Universal Codec (libx265 / libx264)"]
+    
+    F --> I["🎉 100% Successful Output"]
+    G --> I
+    H --> I
+```
 
 ---
 
 ## 🤖 Zero-Manual-Clone 1-Sentence Prompt for AI Agents (OpenClaw / Claude / Cursor / AGY)
 
-Users **do NOT need to manually clone** the repository. Give this 1-sentence prompt inside a copy-paste code block directly to any AI Agent:
-
 ```bash
-Read https://raw.githubusercontent.com/Francis-Xavier-code/media-pipeline-cli/main/skills/media-upscaler/SKILL.md, auto-install it, and use GPU AI to batch upscale my photos and videos to 4K 120fps HDR.
+Read https://raw.githubusercontent.com/Francis-Xavier-code/media-pipeline-cli/main/skills/media-upscaler/SKILL.md, auto-install it, and use GPU/CPU fallback AI to batch upscale my photos and videos to 4K 120fps HDR.
 ```
 
 ---
 
 ## ⚡ 1-Line Online Installers
-
-No manual `git clone` needed! Run this 1-line script in your terminal to auto-install:
 
 ### 🪟 Windows (PowerShell):
 ```powershell
@@ -42,11 +61,11 @@ curl -fsSL https://raw.githubusercontent.com/Francis-Xavier-code/media-pipeline-
 
 ## 💻 Cross-Platform Compatibility Matrix
 
-| OS Platform | GPU API | Video Encoder |
+| OS Platform | Preferred GPU Acceleration | CPU Fallback Mode |
 | :--- | :--- | :--- |
-| **🪟 Windows** | Vulkan (NVIDIA / AMD / Intel) | NVIDIA NVENC (`hevc_nvenc`) |
-| **🐧 Linux** | Vulkan API | NVIDIA NVENC / VAAPI |
-| **🍎 macOS (Apple Silicon M1/M2/M3/M4 & Intel)** | Apple Metal / MoltenVK | macOS VideoToolbox (`hevc_videotoolbox`) |
+| **🪟 Windows** | Vulkan (NVIDIA / AMD / Intel) | CPU Multi-threading (`-g -1`) + `libx265` |
+| **🐧 Linux** | Vulkan API | CPU Multi-threading (`-g -1`) + `libx265` |
+| **🍎 macOS (Apple Silicon M1/M2/M3/M4 & Intel)** | Apple Metal / MoltenVK | CPU Multi-threading (`-g -1`) + `libx265` |
 
 ---
 
