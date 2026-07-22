@@ -6,11 +6,36 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20Linux%20%7C%20macOS-blue.svg)](#)
 [![GPU Accelerated](https://img.shields.io/badge/GPU-Vulkan%20%7C%20NVENC%20%7C%20Metal-green.svg)](#)
+[![Hardware Fallback](https://img.shields.io/badge/Hardware%20Safety-CPU%20Fallback%20Net-orange.svg)](#)
 [![Agent Skill](https://img.shields.io/badge/AI%20Agent-Zero%20Clone%20Ready-purple.svg)](skills/media-upscaler/SKILL.md)
 
-> **基于 GPU 硬件加速的跨平台 (Windows / Linux / macOS) 图片 4K/8K AI 超分辨率重构与视频 120帧 10-bit HDR 补帧渲染工具。**
+> **基于 GPU 硬件加速 + CPU 软硬件自动降级保底的跨平台 (Windows / Linux / macOS) 图片 4K/8K AI 超分辨率重构与视频 120帧 10-bit HDR 补帧渲染工具。**
 
-`media-pipeline` (ai-media) 是一个轻量级、高性能的 Python 命令行工具，利用显卡 GPU 硬件加速（Vulkan, Apple Metal, NVIDIA NVENC & macOS VideoToolbox 芯片），实现照片画质无损放大与视频极致丝滑重构。
+`media-pipeline` (ai-media) 是一个轻量级、高兼容性的 Python 命令行工具。不仅能优先调用显卡 GPU 硬件加速（Vulkan, Apple Metal, NVIDIA NVENC & macOS VideoToolbox），还在**无独立显卡、集显过老或云服务器环境**下内置了 **三级 CPU 软硬件降级保底网络**，确保在任何穷尽配置的电脑上 **100% 成功运行、绝不崩溃**！
+
+---
+
+## 🛡️ 软硬件三级保底降级机制 (Zero-Crash Hardware Safety Net)
+
+针对低配电脑、无独显笔记本、过老集显或无 GPU 的云服务器，系统构建了全自动软硬件降级链：
+
+```mermaid
+graph TD
+    A["开始处理媒体文件"] --> B{"1. GPU Vulkan 硬件检测"}
+    B -->|支持| C["GPU Vulkan 硬件加速 (-g 0)"]
+    B -->|不支持 / 无独显| D["⚠️ 自动降级: CPU 多线程 AI 模式 (-g -1)"]
+    
+    C --> E{"2. 视频编码器硬件检测"}
+    D --> E
+    
+    E -->|NVIDIA GPU| F["NVIDIA NVENC 硬件编码 (hevc_nvenc)"]
+    E -->|Apple Silicon| G["Apple VideoToolbox 硬件编码 (hevc_videotoolbox)"]
+    E -->|集显 / 无 GPU| H["⚠️ 自动降级: CPU 通用软件编码 (libx265 / libx264)"]
+    
+    F --> I["🎉 100% 成功重构输出"]
+    G --> I
+    H --> I
+```
 
 ---
 
@@ -19,14 +44,12 @@
 用户**无需手动克隆仓库**，直接在聊天框中**点击复制**下面代码块里的【一句话指令】发送给任意 AI Agent，AI 就会自动远程读取规范、安装环境并执行渲染：
 
 ```bash
-请读取远程规范 https://raw.githubusercontent.com/Francis-Xavier-code/media-pipeline-cli/main/skills/media-upscaler/SKILL.md ，自动帮我安装并使用 GPU 将指定目录下的图片和视频批量重构为 4K 120帧 HDR 画质。
+请读取远程规范 https://raw.githubusercontent.com/Francis-Xavier-code/media-pipeline-cli/main/skills/media-upscaler/SKILL.md ，自动帮我安装并使用 GPU/CPU 自动保底机制将指定目录下的图片和视频批量重构为 4K 120帧 HDR 画质。
 ```
 
 ---
 
 ## ⚡ 1 行在线一键安装脚本 (1-Line Online Installer)
-
-无需手动 `git clone`，直接在终端中复制运行以下 1 行脚本即可全自动安装：
 
 ### 🪟 Windows (PowerShell):
 ```powershell
@@ -42,11 +65,11 @@ curl -fsSL https://raw.githubusercontent.com/Francis-Xavier-code/media-pipeline-
 
 ## 💻 跨平台支持 (Cross-Platform Matrix)
 
-| 操作系统 | GPU 硬件加速 API | 视频硬件编码器 |
+| 操作系统 | GPU 优先硬件加速 API | CPU 自动保底降级模式 |
 | :--- | :--- | :--- |
-| **🪟 Windows** | Vulkan (NVIDIA / AMD / Intel) | NVIDIA NVENC (`hevc_nvenc`) |
-| **🐧 Linux (Ubuntu/Debian/Arch)** | Vulkan API | NVIDIA NVENC / VAAPI |
-| **🍎 macOS (Apple Silicon M1/M2/M3/M4 & Intel)** | Apple Metal / MoltenVK | macOS VideoToolbox (`hevc_videotoolbox`) |
+| **🪟 Windows** | Vulkan (NVIDIA / AMD / Intel) | CPU Multi-threading (`-g -1`) + `libx265` |
+| **🐧 Linux (Ubuntu/Debian/Arch)** | Vulkan API | CPU Multi-threading (`-g -1`) + `libx265` |
+| **🍎 macOS (Apple Silicon M1/M2/M3/M4 & Intel)** | Apple Metal / MoltenVK | CPU Multi-threading (`-g -1`) + `libx265` |
 
 ---
 
