@@ -14,6 +14,16 @@
 
 ---
 
+## 🤖 零手动克隆 · 一句话给 AI Agent 自动搞定 (支持 OpenClaw / Claude Code / Cursor / AGY 等)
+
+用户**无需手动克隆仓库**，直接在聊天框中**点击复制**下面代码块里的【一句话指令】发送给任意 AI Agent，AI 就会自动远程读取规范、安装环境并执行渲染：
+
+```bash
+请读取远程规范 https://raw.githubusercontent.com/Francis-Xavier-code/media-pipeline-cli/main/skills/media-upscaler/SKILL.md ，自动帮我安装并使用 GPU 将指定目录下的图片和视频批量重构为 4K 120帧 HDR 画质。
+```
+
+---
+
 ## ⚡ 1 行在线一键安装脚本 (1-Line Online Installer)
 
 无需手动 `git clone`，直接在终端中复制运行以下 1 行脚本即可全自动安装：
