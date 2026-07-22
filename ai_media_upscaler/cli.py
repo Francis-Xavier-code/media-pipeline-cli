@@ -39,28 +39,32 @@ def is_pid_running(pid):
             return False
 
 def force_stop_all_pipeline_processes():
-    """Finds and terminates all active pipeline scripts and GPU binary processes."""
+    """Finds and terminates all active pipeline scripts and GPU binary processes on Windows/Linux/macOS."""
     killed_count = 0
-    target_names = ["start_video_ai_reconstruction", "rife-ncnn-vulkan", "realesrgan-ncnn-vulkan"]
+    target_binaries = ["rife-ncnn-vulkan.exe", "realesrgan-ncnn-vulkan.exe", "ffmpeg.exe"]
     
     if os.name == 'nt':
-        for tname in target_names:
-            cmd = f"wmic process where \"commandline like '%{tname}%'\" get processid"
+        # 1. Kill binary executables directly
+        for t in target_binaries:
             try:
-                res = subprocess.run(cmd, capture_output=True, text=True, shell=True)
-                for line in res.stdout.splitlines():
-                    line = line.strip()
-                    if line.isdigit():
-                        pid = int(line)
-                        if pid != os.getpid():
-                            subprocess.run(["taskkill", "/F", "/PID", str(pid)], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-                            killed_count += 1
+                res = subprocess.run(["taskkill", "/F", "/IM", t], capture_output=True, text=True)
+                if "SUCCESS" in res.stdout or "成功" in res.stdout:
+                    killed_count += 1
             except Exception:
                 pass
+        # 2. Kill python pipeline runner processes via PowerShell Get-CimInstance
+        cmd_py = "powershell -Command \"Get-CimInstance Win32_Process | Where-Object { $_.CommandLine -like '*start_video_ai_reconstruction*' } | ForEach-Object { Stop-Process -Id $_.ProcessId -Force }\""
+        try:
+            res_py = subprocess.run(cmd_py, capture_output=True, text=True, shell=True)
+            if res_py.returncode == 0:
+                killed_count += 1
+        except Exception:
+            pass
     else:
+        target_names = ["start_video_ai_reconstruction", "rife-ncnn-vulkan", "realesrgan-ncnn-vulkan"]
         for tname in target_names:
             try:
-                subprocess.run(["pkill", "-f", tname], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                subprocess.run(["pkill", "-9", "-f", tname], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
                 killed_count += 1
             except Exception:
                 pass
@@ -139,13 +143,11 @@ def main():
     args = parser.parse_args()
 
     if args.command == "status":
-        res = subprocess.run("wmic process where \"commandline like '%start_video_ai_reconstruction%'\" get processid", capture_output=True, text=True, shell=True) if os.name=='nt' else None
+        cmd_check = "powershell -Command \"Get-CimInstance Win32_Process | Where-Object { $_.CommandLine -like '*start_video_ai_reconstruction*' } | Select-Object -ExpandProperty ProcessId\""
+        res = subprocess.run(cmd_check, capture_output=True, text=True, shell=True) if os.name=='nt' else None
         active = False
-        if res:
-            for l in res.stdout.splitlines():
-                if l.strip().isdigit():
-                    active = True
-                    break
+        if res and res.stdout.strip():
+            active = True
 
         print("=== 📊 ai-media Pipeline Status ===")
         if active:
@@ -163,7 +165,7 @@ def main():
     elif args.command == "stop":
         print("🛑 Stopping all active ai-media pipeline processes...")
         killed = force_stop_all_pipeline_processes()
-        print(f"✅ Successfully stopped active pipeline processes (Terminated {killed} processes).")
+        print(f"✅ Successfully stopped active pipeline processes.")
 
         if args.clean:
             cleaned = clean_temp_directories()
@@ -173,7 +175,7 @@ def main():
         print("🛑 Stopping pipeline and cleaning temporary cache folders...")
         killed = force_stop_all_pipeline_processes()
         cleaned = clean_temp_directories()
-        print(f"✅ Successfully stopped pipeline (Terminated {killed} processes) and cleaned temp folders: {cleaned}")
+        print(f"✅ Successfully stopped pipeline and cleaned temp folders: {cleaned}")
 
     elif args.command == "uninstall":
         print("🛑 Stopping background processes and cleaning temporary cache folders...")
@@ -184,13 +186,11 @@ def main():
         print("✨ ai-media-upscaler has been completely uninstalled.")
 
     elif args.command == "continue":
-        res = subprocess.run("wmic process where \"commandline like '%start_video_ai_reconstruction%'\" get processid", capture_output=True, text=True, shell=True) if os.name=='nt' else None
+        cmd_check = "powershell -Command \"Get-CimInstance Win32_Process | Where-Object { $_.CommandLine -like '*start_video_ai_reconstruction*' } | Select-Object -ExpandProperty ProcessId\""
+        res = subprocess.run(cmd_check, capture_output=True, text=True, shell=True) if os.name=='nt' else None
         active = False
-        if res:
-            for l in res.stdout.splitlines():
-                if l.strip().isdigit():
-                    active = True
-                    break
+        if res and res.stdout.strip():
+            active = True
         if active:
             print("🟢 Pipeline is already running. Use 'ai-media log' to watch live progress.")
             return
