@@ -9,19 +9,37 @@ import platform
 import subprocess
 
 class VideoEnhanceEngine:
-    def __init__(self, rife_exe, ffmpeg_exe="ffmpeg", gpu_id=0, target_fps=120, enable_hdr=True, scale_expr="iw*2:ih*2"):
+    def __init__(self, rife_exe, ffmpeg_exe=None, gpu_id=0, target_fps=120, enable_hdr=True, scale_expr="iw*2:ih*2"):
         self.rife_exe = rife_exe
-        self.ffmpeg_exe = ffmpeg_exe
         self.gpu_id = str(gpu_id)
         self.target_fps = target_fps
         self.enable_hdr = enable_hdr
         self.scale_expr = scale_expr
         self.system = platform.system()
+        self.ffmpeg_exe = self.resolve_ffmpeg_path(ffmpeg_exe, rife_exe)
+
+    def resolve_ffmpeg_path(self, ffmpeg_arg, rife_exe):
+        """Auto-detects the best FFmpeg executable with NVENC hardware acceleration."""
+        if ffmpeg_arg and os.path.exists(ffmpeg_arg):
+            return ffmpeg_arg
+
+        # 1. Search adjacent directory of rife_exe
+        if rife_exe and os.path.exists(rife_exe):
+            adj_ffmpeg = os.path.join(os.path.dirname(rife_exe), "ffmpeg.exe" if self.system == "Windows" else "ffmpeg")
+            if os.path.exists(adj_ffmpeg):
+                return adj_ffmpeg
+
+        # 2. Search known static NVENC ffmpeg paths
+        static_ffmpeg = r"C:\Users\19509\.gemini\antigravity-cli\brain\909da7d6-0567-401a-946d-b8da7d08373b\scratch\ffmpeg\ffmpeg.exe"
+        if os.path.exists(static_ffmpeg):
+            return static_ffmpeg
+
+        return "ffmpeg"
 
     def get_hardware_video_codecs_chain(self):
         """Returns prioritized fallback chain of video encoders (Hardware GPU -> Software CPU)."""
         codecs = []
-        if self.system == "Darwin": # macOS Apple Silicon (M1/M2/M3/M4) Metal VideoToolbox
+        if self.system == "Darwin": # macOS Apple Silicon Metal VideoToolbox
             codecs.extend(["hevc_videotoolbox", "h264_videotoolbox", "libx265", "libx264"])
         elif self.system in ["Windows", "Linux"]: # NVIDIA NVENC / CPU Fallback
             codecs.extend(["hevc_nvenc", "h264_nvenc", "libx265", "libx264"])
@@ -48,6 +66,7 @@ class VideoEnhanceEngine:
         os.makedirs(tmp_out, exist_ok=True)
 
         # 1. Extract raw frames
+        print("  → 1/3 Extracting raw frames with FFmpeg...", flush=True)
         cmd_extract = [
             self.ffmpeg_exe, "-y",
             "-i", vpath,
@@ -65,6 +84,7 @@ class VideoEnhanceEngine:
             return False
 
         # 2. 🛡️ RIFE Vulkan GPU AI Interpolation (with CPU Fallback -g -1)
+        print(f"  → 2/3 ⚡ RIFE Vulkan 120fps AI Interpolation on GPU {self.gpu_id} ({in_count} frames)...", flush=True)
         rife_cwd = os.path.dirname(self.rife_exe)
         cmd_rife = [
             self.rife_exe,
@@ -92,6 +112,7 @@ class VideoEnhanceEngine:
             return False
 
         # 3. 🛡️ Video Encoding Codec Fallback Chain (NVENC -> VideoToolbox -> libx265 CPU)
+        print(f"  → 3/3 🌟 Video Re-encoding (Aspect-Ratio Safe {self.scale_expr}) 10-bit HDR ({out_count} frames)...", flush=True)
         codecs = self.get_hardware_video_codecs_chain()
         encoded = False
         used_codec = ""
