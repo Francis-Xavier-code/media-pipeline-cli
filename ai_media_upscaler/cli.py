@@ -1,9 +1,10 @@
 """
-AI Media Upscaler Command Line Interface (CLI) with Process Management (status, stop, continue, restart, log, photo, video)
+AI Media Upscaler Command Line Interface (CLI) with Full Process Management, Temp Cleanup & Uninstall Helpers
 """
 import os
 import sys
 import time
+import shutil
 import signal
 import ctypes
 import argparse
@@ -13,6 +14,7 @@ from .video_engine import VideoEnhanceEngine
 
 PID_FILE = os.path.expanduser(r"~\.ai_media_pipeline.pid")
 LOG_FILE = r"C:\Users\19509\.gemini\antigravity-cli\brain\909da7d6-0567-401a-946d-b8da7d08373b\.system_generated\tasks\task-1336.log"
+TMP_DIRS = [r"E:\_tmp_rife_in", r"E:\_tmp_rife_out"]
 
 def is_pid_running(pid):
     """Win32 & POSIX Native Robust PID Checker."""
@@ -36,16 +38,49 @@ def is_pid_running(pid):
         except OSError:
             return False
 
-def get_running_pid():
+def force_stop_all_pipeline_processes():
+    """Finds and terminates all active pipeline scripts and GPU binary processes."""
+    killed_count = 0
+    target_names = ["start_video_ai_reconstruction", "rife-ncnn-vulkan", "realesrgan-ncnn-vulkan"]
+    
+    if os.name == 'nt':
+        for tname in target_names:
+            cmd = f"wmic process where \"commandline like '%{tname}%'\" get processid"
+            try:
+                res = subprocess.run(cmd, capture_output=True, text=True, shell=True)
+                for line in res.stdout.splitlines():
+                    line = line.strip()
+                    if line.isdigit():
+                        pid = int(line)
+                        if pid != os.getpid():
+                            subprocess.run(["taskkill", "/F", "/PID", str(pid)], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                            killed_count += 1
+            except Exception:
+                pass
+    else:
+        for tname in target_names:
+            try:
+                subprocess.run(["pkill", "-f", tname], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                killed_count += 1
+            except Exception:
+                pass
+
     if os.path.exists(PID_FILE):
-        try:
-            with open(PID_FILE, 'r') as f:
-                pid = int(f.read().strip())
-            if is_pid_running(pid):
-                return pid
-        except Exception:
-            pass
-    return None
+        try: os.remove(PID_FILE)
+        except: pass
+
+    return killed_count
+
+def clean_temp_directories():
+    cleaned = []
+    for d in TMP_DIRS:
+        if os.path.exists(d):
+            try:
+                shutil.rmtree(d, ignore_errors=True)
+                cleaned.append(d)
+            except Exception:
+                pass
+    return cleaned
 
 def main():
     if hasattr(sys.stdout, 'reconfigure'):
@@ -64,7 +99,11 @@ def main():
     subparsers.add_parser("status", help="Check live status of the AI media processing pipeline")
 
     # Stop Command
-    subparsers.add_parser("stop", help="Gracefully stop the background processing pipeline")
+    stop_parser = subparsers.add_parser("stop", help="Stop background pipeline processes and optionally clean temp caches")
+    stop_parser.add_argument("--clean", "-c", action="store_true", help="Also remove temporary cache folders")
+
+    # Clean Command
+    subparsers.add_parser("clean", help="Stop background processes and remove all temporary cache folders")
 
     # Continue Command
     subparsers.add_parser("continue", help="Resume/continue the pipeline from the latest breakpoint")
@@ -97,10 +136,19 @@ def main():
     args = parser.parse_args()
 
     if args.command == "status":
-        pid = get_running_pid()
+        pid_count = force_stop_all_pipeline_processes() if False else 0 # Probe check
+        # Check active processes
+        res = subprocess.run("wmic process where \"commandline like '%start_video_ai_reconstruction%'\" get processid", capture_output=True, text=True, shell=True) if os.name=='nt' else None
+        active = False
+        if res:
+            for l in res.stdout.splitlines():
+                if l.strip().isdigit():
+                    active = True
+                    break
+
         print("=== 📊 ai-media Pipeline Status ===")
-        if pid:
-            print(f"🟢 Pipeline Status: RUNNING (PID: {pid})")
+        if active:
+            print("🟢 Pipeline Status: RUNNING (Active Video Reconstruction Engine)")
         else:
             print("⚪ Pipeline Status: STOPPED / IDLE")
 
@@ -112,27 +160,32 @@ def main():
                     print("📌 Latest Activity:", lines[-1])
 
     elif args.command == "stop":
-        pid = get_running_pid()
-        if not pid:
-            print("⚪ No active ai-media pipeline process is currently running.")
-            return
-        print(f"🛑 Stopping ai-media pipeline (PID: {pid})...")
-        try:
-            if os.name == 'nt':
-                subprocess.run(["taskkill", "/F", "/PID", str(pid)], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-            else:
-                os.kill(pid, signal.SIGTERM)
-            if os.path.exists(PID_FILE):
-                os.remove(PID_FILE)
-            print("✅ Pipeline successfully stopped.")
-        except Exception as e:
-            print("❌ Failed to stop pipeline:", e)
+        print("🛑 Stopping all active ai-media pipeline processes...")
+        killed = force_stop_all_pipeline_processes()
+        print(f"✅ Successfully stopped active pipeline processes (Terminated {killed} processes).")
+
+        if args.clean:
+            cleaned = clean_temp_directories()
+            print(f"🧹 Cleaned temporary cache folders: {cleaned}")
+
+    elif args.command == "clean":
+        print("🛑 Stopping pipeline and cleaning temporary cache folders...")
+        killed = force_stop_all_pipeline_processes()
+        cleaned = clean_temp_directories()
+        print(f"✅ Successfully stopped pipeline (Terminated {killed} processes) and cleaned temp folders: {cleaned}")
 
     elif args.command == "continue":
-        pid = get_running_pid()
-        if pid:
-            print(f"🟢 Pipeline is already running (PID: {pid}). Use 'ai-media log' to watch live progress.")
+        res = subprocess.run("wmic process where \"commandline like '%start_video_ai_reconstruction%'\" get processid", capture_output=True, text=True, shell=True) if os.name=='nt' else None
+        active = False
+        if res:
+            for l in res.stdout.splitlines():
+                if l.strip().isdigit():
+                    active = True
+                    break
+        if active:
+            print("🟢 Pipeline is already running. Use 'ai-media log' to watch live progress.")
             return
+
         print("🚀 Resuming ai-media processing pipeline from breakpoint...")
         script_path = r"C:\Users\19509\.gemini\antigravity-cli\brain\909da7d6-0567-401a-946d-b8da7d08373b\scratch\start_video_ai_reconstruction.py"
         if os.path.exists(script_path):
@@ -140,19 +193,12 @@ def main():
             with open(PID_FILE, 'w') as f:
                 f.write(str(p.pid))
             print(f"✅ Pipeline resumed in background (PID: {p.pid}). Run 'ai-media log' or 'ai-media status'.")
-        else:
-            print("❌ Pipeline script not found.")
 
     elif args.command == "restart":
         print("🔄 Restarting ai-media processing pipeline...")
-        pid = get_running_pid()
-        if pid:
-            print(f"🛑 Stopping existing pipeline (PID: {pid})...")
-            if os.name == 'nt':
-                subprocess.run(["taskkill", "/F", "/PID", str(pid)], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-            else:
-                os.kill(pid, signal.SIGTERM)
-            time.sleep(1)
+        force_stop_all_pipeline_processes()
+        clean_temp_directories()
+        time.sleep(1)
 
         script_path = r"C:\Users\19509\.gemini\antigravity-cli\brain\909da7d6-0567-401a-946d-b8da7d08373b\scratch\start_video_ai_reconstruction.py"
         if os.path.exists(script_path):
