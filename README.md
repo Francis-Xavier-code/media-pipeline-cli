@@ -9,9 +9,30 @@
 [![Hardware Safety](https://img.shields.io/badge/Hardware%20Safety-CPU%20Fallback%20Net-orange.svg)](#)
 [![Agent Skill](https://img.shields.io/badge/AI%20Agent-Zero%20Clone%20Ready-purple.svg)](skills/media-upscaler/SKILL.md)
 
-> **GPU-Accelerated & CPU-Fallback Cross-Platform (Windows, Linux, macOS) Photo 4K/8K AI Super-Resolution and Video 120fps HDR Interpolation CLI.**
+> **GPU-Accelerated & CPU-Fallback Cross-Platform (Windows, Linux, macOS) Photo 4K/8K AI Super-Resolution and Video 120fps HDR Interpolation CLI with Daemon Process Management.**
 
-`media-pipeline` (ai-media) is a high-performance, ultra-compatible CLI tool. It prioritizes GPU hardware acceleration (Vulkan, Apple Metal, NVIDIA NVENC & macOS VideoToolbox) while featuring a **Triple Hardware CPU Fallback Safety Net** for low-spec PCs, integrated graphics, or headless cloud servers to guarantee **100% execution success with zero crashes**.
+`media-pipeline` (ai-media) is a high-performance CLI tool featuring **full daemon process control subcommands (`status`, `stop`, `continue`, `restart`)** and a **Triple Hardware CPU Fallback Net** to guarantee **100% execution success with zero crashes**.
+
+---
+
+## ⚙️ Daemon Process Control Subcommands
+
+```bash
+# 1. Check live pipeline status (PID, activity, latest progress)
+ai-media status
+
+# 2. Gracefully stop the active background pipeline
+ai-media stop
+
+# 3. Resume/continue pipeline execution from breakpoint
+ai-media continue
+
+# 4. Restart background pipeline from breakpoint
+ai-media restart
+
+# 5. Watch live UTF-8 streaming logs
+ai-media log
+```
 
 ---
 
@@ -55,43 +76,6 @@ irm https://raw.githubusercontent.com/Francis-Xavier-code/media-pipeline-cli/mai
 ### 🐧 Linux & 🍎 macOS (Terminal / Bash):
 ```bash
 curl -fsSL https://raw.githubusercontent.com/Francis-Xavier-code/media-pipeline-cli/main/install.sh | bash
-```
-
----
-
-## 💻 Cross-Platform Compatibility Matrix
-
-| OS Platform | Preferred GPU Acceleration | CPU Fallback Mode |
-| :--- | :--- | :--- |
-| **🪟 Windows** | Vulkan (NVIDIA / AMD / Intel) | CPU Multi-threading (`-g -1`) + `libx265` |
-| **🐧 Linux** | Vulkan API | CPU Multi-threading (`-g -1`) + `libx265` |
-| **🍎 macOS (Apple Silicon M1/M2/M3/M4 & Intel)** | Apple Metal / MoltenVK | CPU Multi-threading (`-g -1`) + `libx265` |
-
----
-
-## 📦 GitHub Releases (v1.0.0)
-
-Official release assets and changelogs are available on **[GitHub Releases (v1.0.0)](https://github.com/Francis-Xavier-code/media-pipeline-cli/releases)**.
-
----
-
-## 🖼️ Before vs After Preview
-
-![AI Before vs After Visual Comparison Banner](assets/comparison_banner.jpg)
-
----
-
-## 🚀 CLI Usage
-
-```bash
-# 1. Watch Logs
-ai-media log
-
-# 2. Photo Upscaling
-ai-media photo -i "./input_photos" -o "./output_photos" --exe "./realesrgan-ncnn-vulkan"
-
-# 3. Video 120fps & HDR
-ai-media video -i "./input_video.mp4" -o "./output_video" --exe "./rife-ncnn-vulkan" --fps 120 --hdr
 ```
 
 ---
