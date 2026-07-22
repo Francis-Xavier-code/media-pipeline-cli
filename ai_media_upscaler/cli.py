@@ -8,9 +8,15 @@ from .photo_engine import PhotoUpscaleEngine
 from .video_engine import VideoEnhanceEngine
 
 def main():
+    if hasattr(sys.stdout, 'reconfigure'):
+        try:
+            sys.stdout.reconfigure(encoding='utf-8')
+        except Exception:
+            pass
+
     parser = argparse.ArgumentParser(
         prog="ai-media",
-        description="✨ GPU-Accelerated Photo 4K/8K Super-Resolution & Video 120fps HDR Interpolation CLI"
+        description="GPU-Accelerated Photo 4K/8K Super-Resolution & Video 120fps HDR Interpolation CLI"
     )
     subparsers = parser.add_subparsers(dest="command", help="Available Commands")
 
@@ -39,7 +45,7 @@ def main():
         engine.batch_process(args.input, args.output, deduplicate=not args.no_dedupe)
     elif args.command == "video":
         engine = VideoEnhanceEngine(rife_exe=args.exe, gpu_id=args.gpu, target_fps=args.fps, enable_hdr=args.hdr)
-        print(f"🚀 Processing video on GPU {args.gpu} (FPS: {args.fps}, HDR: {args.hdr})...")
+        print(f"Processing video on GPU {args.gpu} (FPS: {args.fps}, HDR: {args.hdr})...")
     else:
         parser.print_help()
 
