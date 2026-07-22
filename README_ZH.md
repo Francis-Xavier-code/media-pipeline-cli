@@ -13,6 +13,21 @@
 
 ---
 
+## 📦 二进制可执行文件说明 (Portable Binaries)
+
+根据 GitHub 开源规范，**大型 `.exe` 二进制文件（如 Real-ESRGAN, RIFE, FFmpeg）不适合直接提交在源码 Git 树中**（避免仓库膨胀至数 GB）。
+
+我们在 **[GitHub Releases](https://github.com/Francis-Xavier-code/media-pipeline-cli/releases)** 发布区提供了三种便捷获取方式：
+
+1. ⚡ **全包预装免配置 Zip 包**：前往 [Releases](https://github.com/Francis-Xavier-code/media-pipeline-cli/releases) 下载 `media-pipeline-v1.0.0-windows-x64.zip`，内含全部预编译可执行 `.exe` 文件。
+2. 🔗 **官方独立可执行程序下载**：
+   - **Real-ESRGAN Vulkan**: [realesrgan-ncnn-vulkan-windows.zip](https://github.com/xinntao/Real-ESRGAN/releases)
+   - **RIFE Vulkan**: [rife-ncnn-vulkan-windows.zip](https://github.com/nihui/rife-ncnn-vulkan/releases)
+   - **FFmpeg NVENC**: [ffmpeg-essentials-build.zip](https://www.gyan.dev/ffmpeg/builds/)
+3. 💻 **系统环境变量**：若您的 Windows 系统环境变量中已安装过 `ffmpeg`，CLI 会自动直接调用。
+
+---
+
 ## 🖼️ 修复前后画质对比 (Before vs After)
 
 ![AI 修复前后画质实测对比](assets/comparison_banner.jpg)
