@@ -1,6 +1,6 @@
 # ✨ AI Media Upscaler CLI
 
-🌐 **[简体中文](README_ZH.md)** | **English** | **[📚 Documentation Directory (docs/)](docs/CLI_USAGE.md)** | **[🏗️ Architecture Spec](docs/ARCHITECTURE.md)**
+🌐 **[简体中文](README_ZH.md)** | **English** | **[📚 Documentation Directory (docs/)](docs/CLI_USAGE.md)** | **[🏗️ Architecture Spec](docs/ARCHITECTURE.md)** | **[📦 Releases](https://github.com/Francis-Xavier-code/media-pipeline-cli/releases)**
 
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
@@ -14,6 +14,22 @@
 
 ---
 
+## ⚡ 1-Line Online Installers
+
+No manual `git clone` needed! Run this 1-line script in your terminal to auto-install:
+
+### 🪟 Windows (PowerShell):
+```powershell
+irm https://raw.githubusercontent.com/Francis-Xavier-code/media-pipeline-cli/main/install.ps1 | iex
+```
+
+### 🐧 Linux & 🍎 macOS (Terminal / Bash):
+```bash
+curl -fsSL https://raw.githubusercontent.com/Francis-Xavier-code/media-pipeline-cli/main/install.sh | bash
+```
+
+---
+
 ## 💻 Cross-Platform Compatibility Matrix
 
 | OS Platform | GPU API | Video Encoder |
@@ -21,6 +37,12 @@
 | **🪟 Windows** | Vulkan (NVIDIA / AMD / Intel) | NVIDIA NVENC (`hevc_nvenc`) |
 | **🐧 Linux** | Vulkan API | NVIDIA NVENC / VAAPI |
 | **🍎 macOS (Apple Silicon M1/M2/M3/M4 & Intel)** | Apple Metal / MoltenVK | macOS VideoToolbox (`hevc_videotoolbox`) |
+
+---
+
+## 📦 GitHub Releases (v1.0.0)
+
+Official release assets and changelogs are available on **[GitHub Releases (v1.0.0)](https://github.com/Francis-Xavier-code/media-pipeline-cli/releases)**.
 
 ---
 
