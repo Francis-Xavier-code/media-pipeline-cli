@@ -253,7 +253,17 @@ def main():
             print(f"🚀 Video AI Reconstruction started in background (PID: {p.pid}). Use 'ai-media log' or 'ai-media status'.")
         else:
             engine = VideoEnhanceEngine(rife_exe=args.exe, gpu_id=args.gpu, target_fps=args.fps, enable_hdr=args.hdr)
-            print(f"Processing video on GPU {args.gpu} (FPS: {args.fps}, HDR: {args.hdr})...")
+            os.makedirs(args.output, exist_ok=True)
+            if os.path.isfile(args.input):
+                engine.process_single_video(args.input, 1, 1, args.output)
+            elif os.path.isdir(args.input):
+                files = [f for f in os.listdir(args.input) if f.lower().endswith(('.mp4', '.mov', '.mkv', '.avi', '.flv', '.wmv'))]
+                print(f"=== 🎬 Starting Video AI Processing ({len(files)} files) ===", flush=True)
+                for idx, fname in enumerate(files, 1):
+                    vpath = os.path.join(args.input, fname)
+                    engine.process_single_video(vpath, idx, len(files), args.output)
+            else:
+                print(f"❌ Error: Input path not found: {args.input}")
 
     else:
         parser.print_help()
