@@ -1,5 +1,5 @@
 """
-AI Media Upscaler Command Line Interface (CLI) with Process Control, Temp Clean & Self-Uninstall (status, stop, continue, restart, clean, uninstall, log, photo, video)
+AI Media Upscaler Command Line Interface (CLI) with Foreground & Background Daemon Modes (--detach / -d)
 """
 import os
 import sys
@@ -44,7 +44,6 @@ def force_stop_all_pipeline_processes():
     target_binaries = ["rife-ncnn-vulkan.exe", "realesrgan-ncnn-vulkan.exe", "ffmpeg.exe"]
     
     if os.name == 'nt':
-        # 1. Kill binary executables directly
         for t in target_binaries:
             try:
                 res = subprocess.run(["taskkill", "/F", "/IM", t], capture_output=True, text=True)
@@ -52,7 +51,6 @@ def force_stop_all_pipeline_processes():
                     killed_count += 1
             except Exception:
                 pass
-        # 2. Kill python pipeline runner processes via PowerShell Get-CimInstance
         cmd_py = "powershell -Command \"Get-CimInstance Win32_Process | Where-Object { $_.CommandLine -like '*start_video_ai_reconstruction*' } | ForEach-Object { Stop-Process -Id $_.ProcessId -Force }\""
         try:
             res_py = subprocess.run(cmd_py, capture_output=True, text=True, shell=True)
@@ -130,6 +128,7 @@ def main():
     photo_parser.add_argument("--gpu", type=int, default=0, help="GPU device ID")
     photo_parser.add_argument("--scale", type=int, default=4, help="Upscale factor (2, 4, 8)")
     photo_parser.add_argument("--no-dedupe", action="store_true", help="Disable MD5 content deduplication")
+    photo_parser.add_argument("--detach", "-d", action="store_true", help="Run in background daemon mode")
 
     # Video Command
     video_parser = subparsers.add_parser("video", help="Video 120fps Frame Interpolation & 10-bit HDR Engine")
@@ -139,6 +138,7 @@ def main():
     video_parser.add_argument("--gpu", type=int, default=0, help="GPU device ID")
     video_parser.add_argument("--fps", type=int, default=120, help="Target FPS (60, 120)")
     video_parser.add_argument("--hdr", action="store_true", help="Enable 10-bit HDR10 color re-encoding")
+    video_parser.add_argument("--detach", "-d", action="store_true", help="Run in background daemon mode")
 
     args = parser.parse_args()
 
@@ -237,12 +237,23 @@ def main():
             sys.exit(0)
 
     elif args.command == "photo":
-        engine = PhotoUpscaleEngine(exe_path=args.exe, gpu_id=args.gpu, scale=args.scale)
-        engine.batch_process(args.input, args.output, deduplicate=not args.no_dedupe)
+        if getattr(args, 'detach', False):
+            cmd = [sys.executable, "-m", "ai_media_upscaler.cli", "photo", "-i", args.input, "-o", args.output, "--exe", args.exe, "--gpu", str(args.gpu), "--scale", str(args.scale)]
+            p = subprocess.Popen(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            print(f"🚀 Photo AI Super-Resolution started in background (PID: {p.pid}). Use 'ai-media log' to watch.")
+        else:
+            engine = PhotoUpscaleEngine(exe_path=args.exe, gpu_id=args.gpu, scale=args.scale)
+            engine.batch_process(args.input, args.output, deduplicate=not args.no_dedupe)
 
     elif args.command == "video":
-        engine = VideoEnhanceEngine(rife_exe=args.exe, gpu_id=args.gpu, target_fps=args.fps, enable_hdr=args.hdr)
-        print(f"Processing video on GPU {args.gpu} (FPS: {args.fps}, HDR: {args.hdr})...")
+        if getattr(args, 'detach', False):
+            cmd = [sys.executable, "-m", "ai_media_upscaler.cli", "video", "-i", args.input, "-o", args.output, "--exe", args.exe, "--gpu", str(args.gpu), "--fps", str(args.fps)]
+            if args.hdr: cmd.append("--hdr")
+            p = subprocess.Popen(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            print(f"🚀 Video AI Reconstruction started in background (PID: {p.pid}). Use 'ai-media log' or 'ai-media status'.")
+        else:
+            engine = VideoEnhanceEngine(rife_exe=args.exe, gpu_id=args.gpu, target_fps=args.fps, enable_hdr=args.hdr)
+            print(f"Processing video on GPU {args.gpu} (FPS: {args.fps}, HDR: {args.hdr})...")
 
     else:
         parser.print_help()
