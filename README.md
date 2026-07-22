@@ -13,6 +13,20 @@
 
 ---
 
+## 📦 Portable Executables Notice (Binaries)
+
+Following open-source best practices, **large `.exe` binary files (Real-ESRGAN, RIFE, FFmpeg) are not stored directly in the Git source code tree** to prevent repository bloat (>1 GB).
+
+Binaries are hosted on **[GitHub Releases](https://github.com/Francis-Xavier-code/media-pipeline-cli/releases)**:
+
+1. ⚡ **All-in-One Pre-packaged Zip**: Download `media-pipeline-v1.0.0-windows-x64.zip` from [Releases](https://github.com/Francis-Xavier-code/media-pipeline-cli/releases).
+2. 🔗 **Official Binaries**:
+   - **Real-ESRGAN Vulkan**: [realesrgan-ncnn-vulkan-windows.zip](https://github.com/xinntao/Real-ESRGAN/releases)
+   - **RIFE Vulkan**: [rife-ncnn-vulkan-windows.zip](https://github.com/nihui/rife-ncnn-vulkan/releases)
+   - **FFmpeg NVENC**: [ffmpeg-essentials-build.zip](https://www.gyan.dev/ffmpeg/builds/)
+
+---
+
 ## 🖼️ Before vs After Preview
 
 ![AI Before vs After Visual Comparison Banner](assets/comparison_banner.jpg)
