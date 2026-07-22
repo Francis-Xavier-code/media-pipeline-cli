@@ -25,8 +25,8 @@
 
 ## ✨ 核心特性
 
+- **📺 实时流式日志命令 (`ai-media log`)**：直接通过 CLI 命令实时无乱码监视后台重构进度！
 - **⏩ 智能断点续传 (Breakpoint Resume)**：中断、中途关机或重新运行命令时，自动跳过所有已完成的文件，实现秒级自动接力！
-- **⚡ 实时流式日志 (Real-Time Streaming Logs)**：实时无缓冲输出处理进度、处理耗时、帧数与文件大小。
 - **📐 智能自适应比例 (Aspect-Ratio Safe)**：自动检测横屏/竖屏视频与图片，2x/4K 升频绝不拉伸变形。
 - **🖼️ 图片 4K/8K/16K AI 无损超分**：集成 Real-ESRGAN Vulkan 模型，将模糊照片无损拉升至 4K/8K 巨幅清晰度。
 - **🎬 视频 120fps 光流插帧**：集成 RIFE 深度学习光流补帧，将 24fps/30fps 视频插帧至 60fps/120fps 丝滑画质。
@@ -55,7 +55,12 @@ pip install git+https://github.com/Francis-Xavier-code/media-pipeline-cli.git
 
 ## 🚀 命令行使用指南 (CLI)
 
-### 1. 批量图片 4K/8K AI 超分
+### 1. 实时查看处理日志
+```bash
+ai-media log
+```
+
+### 2. 批量图片 4K/8K AI 超分
 ```bash
 ai-media photo \
   --input "./input_photos" \
@@ -65,7 +70,7 @@ ai-media photo \
   --scale 4
 ```
 
-### 2. 视频 120帧补帧与 10-bit HDR 重构
+### 3. 视频 120帧补帧与 10-bit HDR 重构
 ```bash
 ai-media video \
   --input "./input_video.mp4" \
@@ -74,21 +79,6 @@ ai-media video \
   --gpu 0 \
   --fps 120 \
   --hdr
-```
-
----
-
-## 🏗️ 架构设计
-
-```mermaid
-graph TD
-    A["原始媒体文件 (照片 / 视频)"] --> B["ai-media CLI 控制器 / AI Agent"]
-    B -->|图片超分| C["Real-ESRGAN Vulkan GPU 引擎 (4K/8K/16K PNG)"]
-    B -->|视频插帧| D["RIFE Vulkan GPU 插帧引擎 (120fps 丝滑度)"]
-    B -->|10-bit HDR 重编码| E["NVIDIA NVENC 硬件编码芯片 (10-bit HDR10 HEVC)"]
-    C --> F["超高清输出目录"]
-    D --> F
-    E --> F
 ```
 
 ---
