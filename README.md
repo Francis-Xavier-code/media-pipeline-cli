@@ -1,6 +1,6 @@
 # ✨ AI Media Upscaler CLI
 
-🌐 **[简体中文](README_ZH.md)** | **English**
+🌐 **[简体中文](README_ZH.md)** | **English** | **[📚 Documentation Directory (docs/)](docs/CLI_USAGE.md)** | **[🏗️ Architecture Spec](docs/ARCHITECTURE.md)**
 
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
@@ -16,6 +16,13 @@
 ## 🖼️ Before vs After Preview
 
 ![AI Before vs After Visual Comparison Banner](assets/comparison_banner.jpg)
+
+---
+
+## 📚 Documentation (docs/)
+
+- 📖 **[CLI Usage & API Guide (CLI_USAGE.md)](docs/CLI_USAGE.md)**: Full command-line options and Python API integration.
+- 🏗️ **[System Architecture (ARCHITECTURE.md)](docs/ARCHITECTURE.md)**: Technical breakdown of Vulkan Tiling, Optical-Flow Interpolation, and NVENC 10-bit HDR.
 
 ---
 
