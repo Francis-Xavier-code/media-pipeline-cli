@@ -13,6 +13,24 @@
 
 ---
 
+## 🖼️ Before vs After Preview
+
+![AI Before vs After Visual Comparison Banner](assets/comparison_banner.jpg)
+
+---
+
+## ✨ Features
+
+- **⏩ Automatic Breakpoint Resume**: Interruptions, shutdowns, or re-runs instantly skip 100% completed files and resume right where it left off!
+- **⚡ Real-Time Streaming Logs**: Instant, unbuffered progress logging with execution time, frame count, and output file sizes.
+- **📐 Aspect-Ratio Safe Scaling**: Auto-detects portrait (vertical) vs landscape (horizontal) media, preventing squished or stretched distortion.
+- **🖼️ Photo 4K/8K AI Super-Resolution**: Batch upscales images using Real-ESRGAN Vulkan models.
+- **🎬 Video 120fps Frame Interpolation**: Interpolates 24fps/30fps videos up to 60fps/120fps using RIFE.
+- **🌟 10-bit HDR10 Conversion**: Re-encodes videos to 10-bit HDR using hardware NVENC GPU encoders.
+- **🔒 Tiling Protection**: Prevents VRAM Out-of-Memory crashes by processing frames in tile chunks.
+
+---
+
 ## 🤖 Zero-Manual-Clone 1-Sentence Prompt for AI Agents (OpenClaw / Claude / Cursor / AGY)
 
 Users **do NOT need to manually clone** the repository. Give this 1-sentence prompt directly to any AI Agent, and it will fetch the raw skill spec, auto-install, and execute:
@@ -21,37 +39,7 @@ Users **do NOT need to manually clone** the repository. Give this 1-sentence pro
 
 ---
 
-## ✨ Features
-
-- **🖼️ Photo 4K/8K AI Super-Resolution**: Batch upscales images using Real-ESRGAN Vulkan models.
-- **🎬 Video 120fps Frame Interpolation**: Interpolates 24fps/30fps videos up to 60fps/120fps using RIFE.
-- **🌟 10-bit HDR10 Conversion**: Re-encodes videos to 10-bit HDR using hardware NVENC GPU encoders.
-- **🔒 Tiling Protection**: Prevents VRAM Out-of-Memory crashes by processing frames in tile chunks.
-
----
-
-## 🖼️ Before vs After Comparison
-
-![AI Upscaling Comparison](assets/comparison_banner.jpg)
-
-| 📷 Before (Low-res / SDR) | ✨ After (Real-ESRGAN AI 4K/8K Lossless Reconstruction) |
-| :---: | :---: |
-| Low pixel count, blurry textures | **Pixel-level detail rewrite, upgraded to 13K ultra-clear lossless PNG** |
-
----
-
-## 🛠️ Prerequisites
-
-| Requirement | Details |
-|:---|:---|
-| **Python** | 3.8 or higher |
-| **GPU** | NVIDIA RTX series (Vulkan support required) |
-| **Photo Engine** | [Real-ESRGAN ncnn Vulkan](https://github.com/xinntao/Real-ESRGAN/releases) binary |
-| **Video Engine** | [RIFE ncnn Vulkan](https://github.com/nihui/rife-ncnn-vulkan/releases) binary |
-
----
-
-## 🛠️ Installation
+## 🛠️ Installation (Optional)
 
 ```bash
 pip install git+https://github.com/Francis-Xavier-code/media-pipeline-cli.git
@@ -81,66 +69,6 @@ ai-media video \
   --fps 120 \
   --hdr
 ```
-
----
-
-## 📋 CLI Argument Reference
-
-### `ai-media photo`
-
-| Argument | Short | Required | Default | Description |
-|:---|:---:|:---:|:---:|:---|
-| `--input` | `-i` | ✅ | — | Input photos directory |
-| `--output` | `-o` | ✅ | — | Output 4K photos directory |
-| `--exe` | — | ✅ | — | Path to `realesrgan-ncnn-vulkan.exe` |
-| `--gpu` | — | — | `0` | GPU device ID |
-| `--scale` | — | — | `4` | Upscale factor (`2`, `4`, `8`) |
-| `--no-dedupe` | — | — | `false` | Disable MD5 content deduplication |
-
-### `ai-media video`
-
-| Argument | Short | Required | Default | Description |
-|:---|:---:|:---:|:---:|:---|
-| `--input` | `-i` | ✅ | — | Input video file or directory |
-| `--output` | `-o` | ✅ | — | Output video directory |
-| `--exe` | — | ✅ | — | Path to `rife-ncnn-vulkan.exe` |
-| `--gpu` | — | — | `0` | GPU device ID |
-| `--fps` | — | — | `120` | Target FPS (`60`, `120`) |
-| `--hdr` | — | — | `false` | Enable 10-bit HDR10 color re-encoding |
-
----
-
-## 📁 Project Structure
-
-```
-media-pipeline-cli/
-├── ai_media_upscaler/          # Core Python package
-│   ├── __init__.py
-│   ├── cli.py                  # CLI entry point & argument parser
-│   ├── photo_engine.py         # Real-ESRGAN Vulkan photo upscaling engine
-│   └── video_engine.py         # RIFE Vulkan video interpolation engine
-├── assets/                     # Comparison images for documentation
-├── skills/                     # AI Agent skill specifications
-│   └── media-upscaler/
-│       └── SKILL.md
-├── LICENSE                     # MIT License
-├── pyproject.toml              # Python package configuration
-├── setup.py                    # Legacy setup script
-├── README.md                   # English documentation
-└── README_ZH.md                # Chinese documentation
-```
-
----
-
-## 🤝 Contributing
-
-Contributions are welcome! Please follow these steps:
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
 
 ---
 
