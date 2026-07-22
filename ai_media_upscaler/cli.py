@@ -4,6 +4,7 @@ AI Media Upscaler Command Line Interface (CLI)
 import os
 import sys
 import argparse
+import time
 from .photo_engine import PhotoUpscaleEngine
 from .video_engine import VideoEnhanceEngine
 
@@ -38,6 +39,10 @@ def main():
     video_parser.add_argument("--fps", type=int, default=120, help="Target FPS (60, 120)")
     video_parser.add_argument("--hdr", action="store_true", help="Enable 10-bit HDR10 color re-encoding")
 
+    # Log Command
+    log_parser = subparsers.add_parser("log", help="Watch Real-Time UTF-8 Streaming Processing Logs")
+    log_parser.add_argument("--file", "-f", type=str, help="Log file path to watch")
+
     args = parser.parse_args()
 
     if args.command == "photo":
@@ -46,6 +51,27 @@ def main():
     elif args.command == "video":
         engine = VideoEnhanceEngine(rife_exe=args.exe, gpu_id=args.gpu, target_fps=args.fps, enable_hdr=args.hdr)
         print(f"Processing video on GPU {args.gpu} (FPS: {args.fps}, HDR: {args.hdr})...")
+    elif args.command == "log":
+        log_path = args.file or r"C:\Users\19509\.gemini\antigravity-cli\brain\909da7d6-0567-401a-946d-b8da7d08373b\.system_generated\tasks\task-1336.log"
+        if not os.path.exists(log_path):
+            print(f"Log file not found: {log_path}")
+            return
+        print(f"=== 📺 Watching Real-Time Streaming Log: {log_path} (Press Ctrl+C to exit) ===")
+        try:
+            with open(log_path, 'r', encoding='utf-8', errors='ignore') as f:
+                # Read all existing lines first
+                for line in f:
+                    print(line, end='', flush=True)
+                # Stream new lines continuously
+                while True:
+                    line = f.readline()
+                    if not line:
+                        time.sleep(0.5)
+                        continue
+                    print(line, end='', flush=True)
+        except KeyboardInterrupt:
+            print("\n👋 Log watching stopped gracefully.")
+            sys.exit(0)
     else:
         parser.print_help()
 
