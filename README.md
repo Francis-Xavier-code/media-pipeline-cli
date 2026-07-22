@@ -14,6 +14,16 @@
 
 ---
 
+## 🤖 Zero-Manual-Clone 1-Sentence Prompt for AI Agents (OpenClaw / Claude / Cursor / AGY)
+
+Users **do NOT need to manually clone** the repository. Give this 1-sentence prompt inside a copy-paste code block directly to any AI Agent:
+
+```bash
+Read https://raw.githubusercontent.com/Francis-Xavier-code/media-pipeline-cli/main/skills/media-upscaler/SKILL.md, auto-install it, and use GPU AI to batch upscale my photos and videos to 4K 120fps HDR.
+```
+
+---
+
 ## ⚡ 1-Line Online Installers
 
 No manual `git clone` needed! Run this 1-line script in your terminal to auto-install:
