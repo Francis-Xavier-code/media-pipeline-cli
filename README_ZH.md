@@ -4,27 +4,35 @@
 
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![GPU Accelerated](https://img.shields.io/badge/GPU-NVIDIA%20RTX%20Accelerated-green.svg)](#)
+[![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20Linux%20%7C%20macOS-blue.svg)](#)
+[![GPU Accelerated](https://img.shields.io/badge/GPU-Vulkan%20%7C%20NVENC%20%7C%20Metal-green.svg)](#)
 [![Agent Skill](https://img.shields.io/badge/AI%20Agent-Zero%20Clone%20Ready-purple.svg)](skills/media-upscaler/SKILL.md)
 
-> **基于 GPU 硬件加速的图片 4K/8K AI 超分辨率重构与视频 120帧 10-bit HDR 补帧渲染工具。**
+> **基于 GPU 硬件加速的跨平台 (Windows / Linux / macOS) 图片 4K/8K AI 超分辨率重构与视频 120帧 10-bit HDR 补帧渲染工具。**
 
-`media-pipeline` (ai-media) 是一个轻量级、高性能的 Python 命令行工具，利用显卡 GPU 硬件加速（Vulkan & NVENC 硬件芯片），实现照片画质无损放大与视频极致丝滑重构。
+`media-pipeline` (ai-media) 是一个轻量级、高性能的 Python 命令行工具，利用显卡 GPU 硬件加速（Vulkan, Apple Metal, NVIDIA NVENC & macOS VideoToolbox 芯片），实现照片画质无损放大与视频极致丝滑重构。
+
+---
+
+## 💻 跨平台支持 (Cross-Platform Matrix)
+
+| 操作系统 | GPU 硬件加速 API | 视频硬件编码器 |
+| :--- | :--- | :--- |
+| **🪟 Windows** | Vulkan (NVIDIA / AMD / Intel) | NVIDIA NVENC (`hevc_nvenc`) |
+| **🐧 Linux (Ubuntu/Debian/Arch)** | Vulkan API | NVIDIA NVENC / VAAPI |
+| **🍎 macOS (Apple Silicon M1/M2/M3/M4 & Intel)** | Apple Metal / MoltenVK | macOS VideoToolbox (`hevc_videotoolbox`) |
 
 ---
 
 ## 📦 二进制可执行文件说明 (Portable Binaries)
 
-根据 GitHub 开源规范，**大型 `.exe` 二进制文件（如 Real-ESRGAN, RIFE, FFmpeg）不适合直接提交在源码 Git 树中**（避免仓库膨胀至数 GB）。
+根据 GitHub 开源规范，**大型二进制文件（如 Real-ESRGAN, RIFE, FFmpeg）不适合直接提交在源码 Git 树中**。
 
-我们在 **[GitHub Releases](https://github.com/Francis-Xavier-code/media-pipeline-cli/releases)** 发布区提供了三种便捷获取方式：
+我们在 **[GitHub Releases](https://github.com/Francis-Xavier-code/media-pipeline-cli/releases)** 发布区为 Windows / Linux / macOS 提供了下载链接：
 
-1. ⚡ **全包预装免配置 Zip 包**：前往 [Releases](https://github.com/Francis-Xavier-code/media-pipeline-cli/releases) 下载 `media-pipeline-v1.0.0-windows-x64.zip`，内含全部预编译可执行 `.exe` 文件。
-2. 🔗 **官方独立可执行程序下载**：
-   - **Real-ESRGAN Vulkan**: [realesrgan-ncnn-vulkan-windows.zip](https://github.com/xinntao/Real-ESRGAN/releases)
-   - **RIFE Vulkan**: [rife-ncnn-vulkan-windows.zip](https://github.com/nihui/rife-ncnn-vulkan/releases)
-   - **FFmpeg NVENC**: [ffmpeg-essentials-build.zip](https://www.gyan.dev/ffmpeg/builds/)
-3. 💻 **系统环境变量**：若您的 Windows 系统环境变量中已安装过 `ffmpeg`，CLI 会自动直接调用。
+- **Real-ESRGAN Vulkan**: [Windows](https://github.com/xinntao/Real-ESRGAN/releases) | [Linux](https://github.com/xinntao/Real-ESRGAN/releases) | [macOS](https://github.com/xinntao/Real-ESRGAN/releases)
+- **RIFE Vulkan**: [Windows](https://github.com/nihui/rife-ncnn-vulkan/releases) | [Linux](https://github.com/nihui/rife-ncnn-vulkan/releases) | [macOS](https://github.com/nihui/rife-ncnn-vulkan/releases)
+- **FFmpeg**: 系统常规安装即可 (`sudo apt install ffmpeg` / `brew install ffmpeg`)
 
 ---
 
@@ -45,62 +53,17 @@
 
 ---
 
-## ✨ 核心特性
-
-- **📺 实时流式日志命令 (`ai-media log`)**：直接通过 CLI 命令实时无乱码监视后台重构进度！
-- **⏩ 智能断点续传 (Breakpoint Resume)**：中断、中途关机或重新运行命令时，自动跳过所有已完成的文件，实现秒级自动接力！
-- **📐 智能自适应比例 (Aspect-Ratio Safe)**：自动检测横屏/竖屏视频与图片，2x/4K 升频绝不拉伸变形。
-- **🖼️ 图片 4K/8K/16K AI 无损超分**：集成 Real-ESRGAN Vulkan 模型，将模糊照片无损拉升至 4K/8K 巨幅清晰度。
-- **🎬 视频 120fps 光流插帧**：集成 RIFE 深度学习光流补帧，将 24fps/30fps 视频插帧至 60fps/120fps 丝滑画质。
-- **🌟 10-bit HDR10 动态范围重构**：结合显卡 NVENC 硬件编码，将 SDR 视频色彩升级为 10-bit HDR10 (10.7 亿色)。
-- **🔒 Tiling 显存切块保护**：智能切块渲染，显存占用恒定锁定在 ~3GB，零 Out-of-Memory 崩溃风险。
-
----
-
-## 🤖 零手动克隆 · 一句话给 AI Agent 自动搞定 (支持 OpenClaw / Claude Code / Cursor / AGY 等)
-
-用户**无需手动克隆仓库**，直接将下面**一句话指令**发送给任意 AI Agent，AI 就会自动远程下载规范、自动安装环境并执行媒体画质重构：
-
-> 💬 **【零手动克隆】直接发送给 AI Agent 的指令：**
-> 
-> *"请读取远程规范 https://raw.githubusercontent.com/Francis-Xavier-code/media-pipeline-cli/main/skills/media-upscaler/SKILL.md ，自动帮我安装并使用 GPU 将指定目录下的图片和视频批量重构为 4K 120帧 HDR 画质。"*
-
----
-
-## 🛠️ 安装说明
-
-```bash
-pip install git+https://github.com/Francis-Xavier-code/media-pipeline-cli.git
-```
-
----
-
 ## 🚀 命令行快速上手 (CLI)
 
-### 1. 实时查看处理日志
 ```bash
+# 1. 查看实时日志
 ai-media log
-```
 
-### 2. 批量图片 4K/8K AI 超分
-```bash
-ai-media photo \
-  --input "./input_photos" \
-  --output "./output_4k_photos" \
-  --exe "./bin/realesrgan-ncnn-vulkan.exe" \
-  --gpu 0 \
-  --scale 4
-```
+# 2. 图片 AI 超分
+ai-media photo -i "./input_photos" -o "./output_photos" --exe "./realesrgan-ncnn-vulkan"
 
-### 3. 视频 120帧补帧与 10-bit HDR 重构
-```bash
-ai-media video \
-  --input "./input_video.mp4" \
-  --output "./output_120fps_hdr" \
-  --exe "./bin/rife-ncnn-vulkan.exe" \
-  --gpu 0 \
-  --fps 120 \
-  --hdr
+# 3. 视频 120帧与 HDR 重构
+ai-media video -i "./input_video.mp4" -o "./output_video" --exe "./rife-ncnn-vulkan" --fps 120 --hdr
 ```
 
 ---
