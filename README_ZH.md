@@ -1,6 +1,6 @@
 # ✨ AI Media Upscaler CLI (媒体 AI 画质重构工具)
 
-🌐 **简体中文** | **[English](README.md)**
+🌐 **简体中文** | **[English](README.md)** | **[📚 完整文档目录 (docs/)](docs/CLI_USAGE_ZH.md)** | **[🏗️ 系统架构设计](docs/ARCHITECTURE_ZH.md)**
 
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
@@ -20,6 +20,13 @@
 | 📷 修复前 (原始低清/SDR) | ✨ 修复后 (Real-ESRGAN AI 4K/8K 无损重构) |
 | :---: | :---: |
 | 原图像素较低，纹理模糊 | **像素级细节重写，升级至 13K 超清无损 PNG** |
+
+---
+
+## 📚 详细文档目录 (docs/)
+
+- 📖 **[CLI 命令使用指南 (CLI_USAGE_ZH.md)](docs/CLI_USAGE_ZH.md)**：包含 `photo` / `video` / `log` 参数及 Python API 调用。
+- 🏗️ **[系统架构设计说明 (ARCHITECTURE_ZH.md)](docs/ARCHITECTURE_ZH.md)**：包含显存切块保护、光流插帧与 10-bit HDR 加速原理。
 
 ---
 
@@ -53,7 +60,7 @@ pip install git+https://github.com/Francis-Xavier-code/media-pipeline-cli.git
 
 ---
 
-## 🚀 命令行使用指南 (CLI)
+## 🚀 命令行快速上手 (CLI)
 
 ### 1. 实时查看处理日志
 ```bash
